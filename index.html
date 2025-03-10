@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator DPP, PPN, dan Diskon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .input-prefix {
+            position: absolute;
+            left: 10px;
+            font-weight: bold;
+            color: #555;
+            z-index: 1;
+        }
+        
+        .currency-input {
+            width: 100%;
+            padding: 8px 8px 8px 35px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-group-append {
+            margin-left: 5px;
+            font-weight: bold;
+        }
+        
+        .result {
+            margin-top: 20px;
+            background-color: #e9f7ef;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .result-label {
+            font-weight: bold;
+        }
+        
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kalkulator DPP, PPN, dan Diskon</h1>
+        
+        <div class="form-group">
+            <label for="harga">Harga Awal:</label>
+            <div class="input-wrapper">
+                <span class="input-prefix">Rp</span>
+                <input type="text" id="harga" placeholder="0" class="currency-input">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="diskon">Total Diskon:</label>
+            <div class="input-wrapper">
+                <span class="input-prefix">Rp</span>
+                <input type="text" id="diskon" placeholder="0" value="0" class="currency-input">
+            </div>
+        </div>
+        
+        <div id="result" class="result">
+            <div class="result-row">
+                <span class="result-label">Harga Awal:</span>
+                <span id="harga-awal">Rp 0</span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">Total Diskon:</span>
+                <span id="diskon-hasil">Rp 0</span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">Harga Setelah Diskon:</span>
+                <span id="harga-setelah-diskon">Rp 0</span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">DPP (Dasar Pengenaan Pajak):</span>
+                <span id="dpp">Rp 0</span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">PPN (12%):</span>
+                <span id="ppn">Rp 0</span>
+            </div>
+        </div>
+        
+        <div class="explanation">
+            <h3>Penjelasan Rumus:</h3>
+            <p>DPP = Total * 11/12</p>
+            <p>PPN = DPP × 12%</p>
+        </div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function cleanNumber(num) {
+            return num.replace(/\./g, "");
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const currencyInputs = document.querySelectorAll('.currency-input');
+            
+            currencyInputs.forEach(input => {
+                if(input.value && input.value !== "0") {
+                    input.value = formatNumber(input.value);
+                }
+                
+                input.addEventListener('input', function(e) {
+                    const start = this.selectionStart;
+                    const length = this.value.length;
+                    
+                    let value = this.value.replace(/[^\d]/g, '');
+                    if (value) {
+                        this.value = formatNumber(value);
+                    }
+                    
+                    const newLength = this.value.length;
+                    const cursorPos = start + (newLength - length);
+                    this.setSelectionRange(cursorPos, cursorPos);
+                    
+                    // Automatically calculate when input changes
+                    hitungDppPpn();
+                });
+                
+                input.addEventListener('focus', function() {
+                    if (this.value === "0") {
+                        this.value = "";
+                    }
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (this.value === "") {
+                        this.value = "0";
+                    }
+                    // Also calculate when leaving the field
+                    hitungDppPpn();
+                });
+            });
+            
+            // Calculate on page load
+            hitungDppPpn();
+        });
+
+        function hitungDppPpn() {
+            const hargaValue = document.getElementById('harga').value;
+            const diskonValue = document.getElementById('diskon').value;
+            
+            const harga = parseFloat(cleanNumber(hargaValue) || 0);
+            const diskon = parseFloat(cleanNumber(diskonValue) || 0);
+            
+            if (isNaN(harga) || harga < 0 || isNaN(diskon) || diskon < 0) {
+                alert("Silakan masukkan harga dan diskon yang valid.");
+                return;
+            }
+
+            const hargaSetelahDiskon = harga - diskon;
+            const dpp = hargaSetelahDiskon * (11 / 12);
+            const ppn = dpp * 0.12;
+
+            document.getElementById('harga-awal').innerText = `Rp ${harga.toFixed(2)}`;
+            document.getElementById('diskon-hasil').innerText = `Rp ${diskon.toFixed(2)}`;
+            document.getElementById('harga-setelah-diskon').innerText = `Rp ${hargaSetelahDiskon.toFixed(2)}`;
+            document.getElementById('dpp').innerText = `Rp ${dpp.toFixed(2)}`;
+            document.getElementById('ppn').innerText = `Rp ${ppn.toFixed(2)}`;
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</ html>
