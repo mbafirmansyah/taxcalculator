@@ -152,6 +152,10 @@
             return num.replace(/\./g, "");
         }
 
+        function removeTrailingZeros(num) {
+            return num.replace(/\.?0+$/, "");
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const currencyInputs = document.querySelectorAll('.currency-input');
             
@@ -212,13 +216,13 @@
             const dpp = hargaSetelahDiskon * (11 / 12);
             const ppn = dpp * 0.12;
 
-            document.getElementById('harga-awal').innerText = `Rp ${harga.toFixed(2)}`;
-            document.getElementById('diskon-hasil').innerText = `Rp ${diskon.toFixed(2)}`;
-            document.getElementById('harga-setelah-diskon').innerText = `Rp ${hargaSetelahDiskon.toFixed(2)}`;
-            document.getElementById('dpp').innerText = `Rp ${dpp.toFixed(2)}`;
-            document.getElementById('ppn').innerText = `Rp ${ppn.toFixed(2)}`;
+            document.getElementById('harga-awal').innerText = `Rp ${removeTrailingZeros(formatNumber(harga.toFixed(2)))}`;
+            document.getElementById('diskon-hasil').innerText = `Rp ${removeTrailingZeros(formatNumber(diskon.toFixed(2)))}`;
+            document.getElementById('harga-setelah-diskon').innerText = `Rp ${removeTrailingZeros(formatNumber(hargaSetelahDiskon.toFixed(2)))}`;
+            document.getElementById('dpp').innerText = `Rp ${removeTrailingZeros(formatNumber(dpp.toFixed(2)))}`;
+            document.getElementById('ppn').innerText = `Rp ${removeTrailingZeros(formatNumber(ppn.toFixed(2)))}`;
             document.getElementById('result').style.display = 'block';
         }
     </script>
 </body>
-</ html>
+</html>
