@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator DPP, PPN, dan Diskon</title>
     <style>
+        /* CSS untuk tata letak dan desain halaman */
         body {
             font-family: Arial, sans-serif;
             max-width: 600px;
@@ -58,16 +59,6 @@
             box-sizing: border-box;
         }
         
-        .input-group {
-            display: flex;
-            align-items: center;
-        }
-        
-        .input-group-append {
-            margin-left: 5px;
-            font-weight: bold;
-        }
-        
         .result {
             margin-top: 20px;
             background-color: #e9f7ef;
@@ -91,12 +82,29 @@
             background-color: #f8f9fa;
             border-left: 4px solid #4CAF50;
         }
+        
+        .button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        .button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Kalkulator DPP, PPN, dan Diskon</h1>
         
+        <!-- Input untuk Total Harga -->
         <div class="form-group">
             <label for="harga">Total Harga:</label>
             <div class="input-wrapper">
@@ -105,6 +113,7 @@
             </div>
         </div>
         
+        <!-- Input untuk Total Diskon -->
         <div class="form-group">
             <label for="diskon">Total Diskon:</label>
             <div class="input-wrapper">
@@ -113,6 +122,7 @@
             </div>
         </div>
         
+        <!-- Area untuk menampilkan hasil perhitungan -->
         <div id="result" class="result">
             <div class="result-row">
                 <span class="result-label">Total Harga:</span>
@@ -136,6 +146,10 @@
             </div>
         </div>
         
+        <!-- Tombol untuk menghitung pembulatan -->
+        <button class="button" id="hitung-pembulatan" onclick="hitungPembulatan()">Hitung Pembulatan</button>
+        
+        <!-- Penjelasan rumus -->
         <div class="explanation">
             <h3>Penjelasan Rumus:</h3>
             <p>DPP = Total * 11/12</p>
@@ -144,26 +158,58 @@
     </div>
 
     <script>
+        // Fungsi untuk memformat angka dengan tanda pemisah ribuan
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
+        // Fungsi untuk membersihkan input yang berisi tanda titik
         function cleanNumber(num) {
             return num.replace(/\./g, "");
         }
 
+        // Fungsi untuk menghapus angka nol di belakang koma (jika ada)
         function removeTrailingZeros(num) {
             return num.replace(/\.?0+$/, "");
         }
 
+        // Fungsi untuk menghitung pembulatan ke atas DPP dan PPN
+        function hitungPembulatan() {
+            const hargaValue = document.getElementById('harga').value;
+            const diskonValue = document.getElementById('diskon').value;
+            
+            const harga = parseFloat(cleanNumber(hargaValue) || 0);
+            const diskon = parseFloat(cleanNumber(diskonValue) || 0);
+            
+            // Validasi harga dan diskon
+            if (isNaN(harga) || harga < 0 || isNaN(diskon) || diskon < 0) {
+                alert("Silakan masukkan harga dan diskon yang valid.");
+                return;
+            }
+
+            const hargaSetelahDiskon = harga - diskon;
+            const dpp = Math.ceil(hargaSetelahDiskon * (11 / 12)); // Pembulatan ke atas
+            const ppn = Math.ceil(dpp * 0.12); // Pembulatan ke atas
+
+            // Menampilkan hasil perhitungan yang sudah dibulatkan
+            document.getElementById('harga-awal').innerText = "Rp " + removeTrailingZeros(formatNumber(harga.toFixed(2)));
+            document.getElementById('diskon-hasil').innerText = "Rp " + removeTrailingZeros(formatNumber(diskon.toFixed(2)));
+            document.getElementById('harga-setelah-diskon').innerText = "Rp " + removeTrailingZeros(formatNumber(hargaSetelahDiskon.toFixed(2)));
+            document.getElementById('dpp').innerText = "Rp " + removeTrailingZeros(formatNumber(dpp));
+            document.getElementById('ppn').innerText = "Rp " + removeTrailingZeros(formatNumber(ppn));
+        }
+
+        // Fungsi untuk menghitung DPP dan PPN secara otomatis ketika ada perubahan input
         document.addEventListener('DOMContentLoaded', function() {
             const currencyInputs = document.querySelectorAll('.currency-input');
             
             currencyInputs.forEach(input => {
+                // Format input jika sudah ada nilai
                 if(input.value && input.value !== "0") {
                     input.value = formatNumber(input.value);
                 }
                 
+                // Event listener untuk menangani perubahan pada input
                 input.addEventListener('input', function(e) {
                     const start = this.selectionStart;
                     const length = this.value.length;
@@ -177,29 +223,32 @@
                     const cursorPos = start + (newLength - length);
                     this.setSelectionRange(cursorPos, cursorPos);
                     
-                    // Automatically calculate when input changes
+                    // Menghitung DPP dan PPN otomatis setiap ada perubahan input
                     hitungDppPpn();
                 });
                 
+                // Event listener ketika input dalam fokus
                 input.addEventListener('focus', function() {
                     if (this.value === "0") {
                         this.value = "";
                     }
                 });
                 
+                // Event listener ketika input kehilangan fokus
                 input.addEventListener('blur', function() {
                     if (this.value === "") {
                         this.value = "0";
                     }
-                    // Also calculate when leaving the field
+                    // Menghitung DPP dan PPN setelah kehilangan fokus
                     hitungDppPpn();
                 });
             });
             
-            // Calculate on page load
+            // Menghitung DPP dan PPN saat pertama kali halaman dimuat
             hitungDppPpn();
         });
 
+        // Fungsi untuk menghitung DPP dan PPN tanpa pembulatan
         function hitungDppPpn() {
             const hargaValue = document.getElementById('harga').value;
             const diskonValue = document.getElementById('diskon').value;
@@ -207,6 +256,7 @@
             const harga = parseFloat(cleanNumber(hargaValue) || 0);
             const diskon = parseFloat(cleanNumber(diskonValue) || 0);
             
+            // Validasi harga dan diskon
             if (isNaN(harga) || harga < 0 || isNaN(diskon) || diskon < 0) {
                 alert("Silakan masukkan harga dan diskon yang valid.");
                 return;
@@ -216,11 +266,12 @@
             const dpp = hargaSetelahDiskon * (11 / 12);
             const ppn = dpp * 0.12;
 
-            document.getElementById('harga-awal').innerText = `Rp ${removeTrailingZeros(formatNumber(harga.toFixed(2)))}`;
-            document.getElementById('diskon-hasil').innerText = `Rp ${removeTrailingZeros(formatNumber(diskon.toFixed(2)))}`;
-            document.getElementById('harga-setelah-diskon').innerText = `Rp ${removeTrailingZeros(formatNumber(hargaSetelahDiskon.toFixed(2)))}`;
-            document.getElementById('dpp').innerText = `Rp ${removeTrailingZeros(formatNumber(dpp.toFixed(2)))}`;
-            document.getElementById('ppn').innerText = `Rp ${removeTrailingZeros(formatNumber(ppn.toFixed(2)))}`;
+            // Menampilkan hasil perhitungan tanpa pembulatan
+            document.getElementById('harga-awal').innerText = "Rp " + removeTrailingZeros(formatNumber(harga.toFixed(2)));
+            document.getElementById('diskon-hasil').innerText = "Rp " + removeTrailingZeros(formatNumber(diskon.toFixed(2)));
+            document.getElementById('harga-setelah-diskon').innerText = "Rp " + removeTrailingZeros(formatNumber(hargaSetelahDiskon.toFixed(2)));
+            document.getElementById('dpp').innerText = "Rp " + removeTrailingZeros(formatNumber(dpp.toFixed(2)));
+            document.getElementById('ppn').innerText = "Rp " + removeTrailingZeros(formatNumber(ppn.toFixed(2)));
             document.getElementById('result').style.display = 'block';
         }
     </script>
