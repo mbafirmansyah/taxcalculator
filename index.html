@@ -131,6 +131,21 @@
             display: none; /* Keep it hidden */
         }
 
+        .copy-button {
+            background-color: #45a049;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .copy-button:hover {
+            background-color: #4CAF50;
+        }
     </style>
 </head>
 <body>
@@ -195,6 +210,9 @@
 
         <!-- Tombol untuk menghitung pembulatan -->
         <button class="button" id="hitung-pembulatan" onclick="hitungPembulatan()">Hitung Pembulatan</button>
+
+        <!-- Tombol untuk menyalin hasil -->
+        <button class="copy-button" onclick="copyResults()">Copy All Results</button>
 
         <!-- Penjelasan rumus -->
         <div class="explanation" id="explanation">
@@ -286,6 +304,21 @@
 
         // Menambahkan event listener pada dropdown PPN untuk menghitung otomatis saat nilai berubah
         document.getElementById('ppn-select').addEventListener('change', hitungTanpaPembulatan);
+
+        // Function to copy all results to clipboard
+        function copyResults() {
+            const resultText = `
+Total Harga: Rp ${document.getElementById('harga-awal').innerText}
+Total Diskon: Rp ${document.getElementById('diskon-hasil').innerText}
+DPP Harga Jual: Rp ${document.getElementById('harga-jual').innerText}
+DPP Harga Lainnya: Rp ${document.getElementById('dpp-lainnya').innerText}
+PPN: Rp ${document.getElementById('ppn').innerText}
+NETTO: Rp ${document.getElementById('harga-setelah-diskon').innerText}
+            `;
+            navigator.clipboard.writeText(resultText).then(() => {
+                alert('Hasil telah disalin ke clipboard!');
+            });
+        }
     </script>
 
 </body>
