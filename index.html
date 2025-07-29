@@ -1,325 +1,120 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAX CALCULATOR</title>
+    <title>Tax Calculator with Nilai Lainnya</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Global Styles */
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f5f7;
+        .custom-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        h1 {
-            font-size: 24px;
-            color: #333;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-
-        .input-prefix {
-            position: absolute;
-            left: 10px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .currency-input {
-            width: 100%;
-            padding: 12px 15px 12px 35px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #fafafa;
-            transition: border-color 0.3s;
-        }
-
-        .currency-input:focus {
-            border-color: #4CAF50;
-            outline: none;
-        }
-
-        select {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #fafafa;
-        }
-
-        .result {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f1f8f6;
-            border-radius: 12px;
-        }
-
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .result-label {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .result-value {
-            color: #4CAF50;
-        }
-
-        .button {
-            width: 100%;
-            padding: 15px;
-            background-color: #4CAF50;
-            color: white;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .button:hover {
-            background-color: #45a049;
-        }
-
-        /* Add a small margin for explanation section */
-        .explanation {
-            margin-top: 20px;
-            background-color: #fafafa;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            display: none; /* Keep it hidden */
-        }
-
-        .copy-button {
-            background-color: #45a049;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .copy-button:hover {
-            background-color: #4CAF50;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Tax Calculator</h1>
+            <p class="text-gray-600">Calculate Nilai Lainnya Tax with Real-time Preview</p>
+        </div>
 
-    <div class="container">
-        <h1>TAX CALCULATOR</h1>
+        <div class="max-w-2xl mx-auto bg-white rounded-lg p-6 custom-shadow">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="total-price" class="block text-sm font-medium text-gray-700 mb-1">Total Harga Jual</label>
+                    <div class="relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">Rp</span>
+                        </div>
+                        <input type="number" id="total-price" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-12 py-2 border-gray-300 rounded-md" placeholder="0" oninput="calculateTax()">
+                        <div class="absolute inset-y-0 right-0 flex items-center">
+                            <label for="currency" class="sr-only">Currency</label>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Input untuk Total Harga -->
-        <div class="form-group">
-            <label for="harga">Total Harga:</label>
-            <div class="input-wrapper">
-                <span class="input-prefix">Rp</span>
-                <input type="text" id="harga" placeholder="0" class="currency-input">
+                <div>
+                    <label for="total-discount" class="block text-sm font-medium text-gray-700 mb-1">Total Diskon</label>
+                    <div class="relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">Rp</span>
+                        </div>
+                        <input type="number" id="total-discount" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-12 py-2 border-gray-300 rounded-md" placeholder="0" oninput="calculateTax()">
+                        <div class="absolute inset-y-0 right-0 flex items-center">
+                            <label for="currency" class="sr-only">Currency</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Calculation Results</h2>
+                <div class="space-y-4">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Grand Total</span>
+                        <span id="grand-total" class="font-medium">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">DPP Nilai Lainnya (11/12)</span>
+                        <span id="dpp-nilai-lainnya" class="font-medium">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">PPN (12%)</span>
+                        <span id="ppn" class="font-medium">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between border-t border-gray-200 pt-2">
+                        <span class="text-gray-800 font-semibold">Netto</span>
+                        <span id="netto" class="text-indigo-600 font-bold">Rp 0</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Input untuk Total Diskon -->
-        <div class="form-group">
-            <label for="diskon">Total Diskon:</label>
-            <div class="input-wrapper">
-                <span class="input-prefix">Rp</span>
-                <input type="text" id="diskon" placeholder="0" value="0" class="currency-input">
+        <div class="mt-8 bg-white rounded-lg p-6 custom-shadow max-w-2xl mx-auto">
+            <h2 class="text-lg font-medium text-gray-900 mb-4">Calculation Details</h2>
+            <div class="bg-gray-50 p-4 rounded-md">
+                <ul class="list-disc pl-5 space-y-2 text-sm text-gray-600">
+                    <li><span class="font-medium">Grand Total</span> = Total Harga Jual - Total Diskon</li>
+                    <li><span class="font-medium">DPP Nilai Lainnya</span> = Grand Total × 11/12</li>
+                    <li><span class="font-medium">PPN</span> = DPP Nilai Lainnya × 12%</li>
+                    <li><span class="font-medium">Netto</span> = Grand Total + PPN</li>
+                </ul>
             </div>
-        </div>
-
-        <!-- Dropdown untuk memilih PPN -->
-        <div class="form-group">
-            <label for="ppn-select">Pilih PPN:</label>
-            <select id="ppn-select">
-                <option value="1.11">PPN 11%</option>
-                <option value="1.12" selected>PPN 12%</option>
-            </select>
-        </div>
-
-        <!-- Area untuk menampilkan hasil perhitungan -->
-        <div id="result" class="result">
-            <div class="result-row">
-                <span class="result-label">Total Harga:</span>
-                <span id="harga-awal" class="result-value">Rp 0</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">Total Diskon:</span>
-                <span id="diskon-hasil" class="result-value">Rp 0</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">DPP Harga Jual:</span>
-                <span id="harga-jual" class="result-value">Rp 0</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">DPP Harga Lainnya:</span>
-                <span id="dpp-lainnya" class="result-value">Rp 0</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">PPN:</span>
-                <span id="ppn" class="result-value">Rp 0</span>
-            </div>  
-            <div class="result-row">
-                <span class="result-label">NETTO:</span>
-                <span id="harga-setelah-diskon" class="result-value">Rp 0</span>
-            </div>      
-        </div>
-
-        <!-- Tombol untuk menghitung pembulatan -->
-        <button class="button" id="hitung-pembulatan" onclick="hitungPembulatan()">Hitung Pembulatan</button>
-
-        <!-- Tombol untuk menyalin hasil -->
-        <button class="copy-button" onclick="copyResults()">Copy All Results</button>
-
-        <!-- Penjelasan rumus -->
-        <div class="explanation" id="explanation">
-            <!-- Content is now removed as per request -->
         </div>
     </div>
 
     <script>
-        // Fungsi untuk memformat angka dengan tanda pemisah ribuan
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        function formatRupiah(amount) {
+            // Math.round the decimal part, if >= .5 round up, else round down
+            const rounded = (amount - Math.floor(amount)) >= 0.5 ? Math.ceil(amount) : Math.floor(amount);
+            return 'Rp ' + rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
-        // Fungsi untuk membersihkan input yang berisi tanda titik
-        function cleanNumber(num) {
-            return num.replace(/\./g, "");
-        }
-
-        // Fungsi untuk menghapus angka nol di belakang koma (jika ada)
-        function removeTrailingZeros(num) {
-            return num.replace(/\.?0+$/, "");
-        }
-
-        // Fungsi untuk menghitung DPP, PPN, dan NETTO tanpa pembulatan
-        function hitungTanpaPembulatan() {
-            const hargaValue = document.getElementById('harga').value;
-            const diskonValue = document.getElementById('diskon').value;
-            const ppnRate = parseFloat(document.getElementById('ppn-select').value);
+        function calculateTax() {
+            const totalPrice = parseFloat(document.getElementById('total-price').value) || 0;
+            const totalDiscount = parseFloat(document.getElementById('total-discount').value) || 0;
             
-            const harga = parseFloat(cleanNumber(hargaValue) || 0);
-            const diskon = parseFloat(cleanNumber(diskonValue) || 0);
-
-            // Validasi harga dan diskon
-            if (isNaN(harga) || harga < 0 || isNaN(diskon) || diskon < 0) {
-                alert("Silakan masukkan harga dan diskon yang valid.");
-                return;
-            }
-
-            const hargaSetelahDiskon = harga - diskon;
-
-            // Hitung Harga Jual dan DPP Harga Lainnya berdasarkan PPN yang dipilih
-            const hargaJual = hargaSetelahDiskon / ppnRate; // Tanpa pembulatan
-            const dppLainnya = hargaJual / 12 * 11; // Tanpa pembulatan
-            const ppn = dppLainnya * 0.12; // Tanpa pembulatan
-
-            // Menampilkan hasil perhitungan tanpa pembulatan
-            document.getElementById('harga-awal').innerText = "Rp " + removeTrailingZeros(formatNumber(harga.toFixed(2)));
-            document.getElementById('diskon-hasil').innerText = "Rp " + removeTrailingZeros(formatNumber(diskon.toFixed(2)));
-            document.getElementById('harga-setelah-diskon').innerText = "Rp " + removeTrailingZeros(formatNumber(hargaSetelahDiskon.toFixed(2)));
-            document.getElementById('harga-jual').innerText = "Rp " + removeTrailingZeros(formatNumber(hargaJual.toFixed(2)));
-            document.getElementById('dpp-lainnya').innerText = "Rp " + removeTrailingZeros(formatNumber(dppLainnya.toFixed(2)));
-            document.getElementById('ppn').innerText = "Rp " + removeTrailingZeros(formatNumber(ppn.toFixed(2)));
-        }
-
-        // Fungsi untuk menghitung pembulatan ke atas saat tombol "Hitung Pembulatan" diklik
-        function hitungPembulatan() {
-            const hargaValue = document.getElementById('harga').value;
-            const diskonValue = document.getElementById('diskon').value;
-            const ppnRate = parseFloat(document.getElementById('ppn-select').value);
+            // Calculate values
+            // Calculate exact values first, then round the final displays
+            const grandTotal = totalPrice - totalDiscount;
+            const dppNilaiLainnya = grandTotal * (11 / 12);
+            const ppn = dppNilaiLainnya * 0.12;
+            const netto = grandTotal + ppn;
             
-            const harga = parseFloat(cleanNumber(hargaValue) || 0);
-            const diskon = parseFloat(cleanNumber(diskonValue) || 0);
-
-            // Validasi harga dan diskon
-            if (isNaN(harga) || harga < 0 || isNaN(diskon) || diskon < 0) {
-                alert("Silakan masukkan harga dan diskon yang valid.");
-                return;
-            }
-
-            const hargaSetelahDiskon = harga - diskon;
-
-            // Hitung Harga Jual dan DPP Harga Lainnya berdasarkan PPN yang dipilih
-            const hargaJual = Math.ceil(hargaSetelahDiskon / ppnRate); // Pembulatan ke atas
-            const dppLainnya = Math.ceil(hargaJual / 12 * 11); // Pembulatan ke atas
-            const ppn = Math.ceil(dppLainnya * 0.12); // Pembulatan ke atas
-
-            // Menampilkan hasil perhitungan yang sudah dibulatkan
-            document.getElementById('harga-awal').innerText = "Rp " + removeTrailingZeros(formatNumber(harga.toFixed(2)));
-            document.getElementById('diskon-hasil').innerText = "Rp " + removeTrailingZeros(formatNumber(diskon.toFixed(2)));
-            document.getElementById('harga-setelah-diskon').innerText = "Rp " + removeTrailingZeros(formatNumber(hargaSetelahDiskon.toFixed(2)));
-            document.getElementById('harga-jual').innerText = "Rp " + removeTrailingZeros(formatNumber(hargaJual));
-            document.getElementById('dpp-lainnya').innerText = "Rp " + removeTrailingZeros(formatNumber(dppLainnya));
-            document.getElementById('ppn').innerText = "Rp " + removeTrailingZeros(formatNumber(ppn));
+            // Update UI
+            document.getElementById('grand-total').textContent = formatRupiah(grandTotal);
+            document.getElementById('dpp-nilai-lainnya').textContent = formatRupiah(dppNilaiLainnya);
+            document.getElementById('ppn').textContent = formatRupiah(ppn);
+            document.getElementById('netto').textContent = formatRupiah(netto);
         }
 
-        // Menambahkan event listener pada input total harga dan diskon untuk menghitung otomatis saat nilai berubah
-        document.getElementById('harga').addEventListener('input', hitungTanpaPembulatan);
-        document.getElementById('diskon').addEventListener('input', hitungTanpaPembulatan);
-
-        // Menambahkan event listener pada dropdown PPN untuk menghitung otomatis saat nilai berubah
-        document.getElementById('ppn-select').addEventListener('change', hitungTanpaPembulatan);
-
-        // Function to copy all results to clipboard
-        function copyResults() {
-            const resultText = `
-Total Harga: Rp ${document.getElementById('harga-awal').innerText}
-Total Diskon: Rp ${document.getElementById('diskon-hasil').innerText}
-DPP Harga Jual: Rp ${document.getElementById('harga-jual').innerText}
-DPP Harga Lainnya: Rp ${document.getElementById('dpp-lainnya').innerText}
-PPN: Rp ${document.getElementById('ppn').innerText}
-NETTO: Rp ${document.getElementById('harga-setelah-diskon').innerText}
-            `;
-            navigator.clipboard.writeText(resultText).then(() => {
-                alert('Hasil telah disalin ke clipboard!');
-            });
-        }
+        // Initialize calculation on page load
+        window.onload = calculateTax;
     </script>
-
 </body>
 </html>
