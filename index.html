@@ -16,14 +16,14 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
     <div class="container mx-auto px-4 py-8">
         <div class="text-center mb-12">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Tax Calculator</h1>
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Tax Calculator</h1>
             <p class="text-gray-600">Calculate Nilai Lainnya Tax with Real-time Preview</p>
         </div>
 
-        <div class="max-w-2xl mx-auto bg-white rounded-lg p-6 custom-shadow">
+        <div class="max-w-2xl mx-auto bg-white rounded-lg p-6 custom-shadow transition-transform transform hover:scale-105">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                     <label for="total-price" class="block text-sm font-medium text-gray-700 mb-1">Total Harga Jual</label>
@@ -31,10 +31,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">Rp</span>
                         </div>
-                        <input type="number" id="total-price" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-12 py-2 border-gray-300 rounded-md" placeholder="0" oninput="calculateTax()">
-                        <div class="absolute inset-y-0 right-0 flex items-center">
-                            <label for="currency" class="sr-only">Currency</label>
-                        </div>
+                        <input type="number" id="total-price" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-12 py-2 border-gray-300 rounded-md transition duration-150 ease-in-out" placeholder="0" oninput="calculateTax()">
                     </div>
                 </div>
 
@@ -44,10 +41,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">Rp</span>
                         </div>
-                        <input type="number" id="total-discount" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-12 py-2 border-gray-300 rounded-md" placeholder="0" oninput="calculateTax()">
-                        <div class="absolute inset-y-0 right-0 flex items-center">
-                            <label for="currency" class="sr-only">Currency</label>
-                        </div>
+                        <input type="number" id="total-discount" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-12 py-2 border-gray-300 rounded-md transition duration-150 ease-in-out" placeholder="0" oninput="calculateTax()">
                     </div>
                 </div>
             </div>
@@ -90,7 +84,6 @@
 
     <script>
         function formatRupiah(amount) {
-            // Math.round the decimal part, if >= .5 round up, else round down
             const rounded = (amount - Math.floor(amount)) >= 0.5 ? Math.ceil(amount) : Math.floor(amount);
             return 'Rp ' + rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
@@ -99,21 +92,17 @@
             const totalPrice = parseFloat(document.getElementById('total-price').value) || 0;
             const totalDiscount = parseFloat(document.getElementById('total-discount').value) || 0;
             
-            // Calculate values
-            // Calculate exact values first, then round the final displays
             const grandTotal = totalPrice - totalDiscount;
             const dppNilaiLainnya = grandTotal * (11 / 12);
             const ppn = dppNilaiLainnya * 0.12;
             const netto = grandTotal + ppn;
             
-            // Update UI
             document.getElementById('grand-total').textContent = formatRupiah(grandTotal);
             document.getElementById('dpp-nilai-lainnya').textContent = formatRupiah(dppNilaiLainnya);
             document.getElementById('ppn').textContent = formatRupiah(ppn);
             document.getElementById('netto').textContent = formatRupiah(netto);
         }
 
-        // Initialize calculation on page load
         window.onload = calculateTax;
     </script>
 </body>
