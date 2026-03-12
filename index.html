@@ -3,107 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tax Calculator with Nilai Lainnya</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Dynamic Item Adder</title>
     <style>
-        .custom-shadow {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
             margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 30px;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .input-section label {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .input-section input {
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .input-section input:focus {
+            border-color: #4CAF50;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 1.1em;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            font-size: 1em;
+        }
+
+        th {
+            background-color: #f1f1f1;
+        }
+
+        .service-fees, .total-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .service-fees input, .total-container p {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .total-amount {
+            font-weight: bold;
+            font-size: 1.3em;
+            color: #4CAF50;
+        }
+
+        .total-container h3 {
+            margin-top: 10px;
+            color: #333;
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="container mx-auto px-4 py-8">
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">Tax Calculator</h1>
-            <p class="text-gray-600">Calculate Nilai Lainnya Tax with Real-time Preview</p>
-        </div>
+<body>
 
-        <div class="max-w-2xl mx-auto bg-white rounded-lg p-6 custom-shadow transition-transform transform hover:scale-105">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                    <label for="total-price" class="block text-sm font-medium text-gray-700 mb-1">Total Harga Jual</label>
-                    <div class="relative rounded-md shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">Rp</span>
-                        </div>
-                        <input type="number" id="total-price" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-12 py-2 border-gray-300 rounded-md transition duration-150 ease-in-out" placeholder="0" oninput="calculateTax()">
-                    </div>
-                </div>
+<div class="container">
+    <h1>Product Order List</h1>
 
-                <div>
-                    <label for="total-discount" class="block text-sm font-medium text-gray-700 mb-1">Total Diskon</label>
-                    <div class="relative rounded-md shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">Rp</span>
-                        </div>
-                        <input type="number" id="total-discount" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-12 py-2 border-gray-300 rounded-md transition duration-150 ease-in-out" placeholder="0" oninput="calculateTax()">
-                    </div>
-                </div>
-            </div>
-
-            <div class="border-t border-gray-200 pt-6">
-                <h2 class="text-lg font-medium text-gray-900 mb-4">Calculation Results</h2>
-                <div class="space-y-4">
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Grand Total</span>
-                        <span id="grand-total" class="font-medium">Rp 0</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">DPP Nilai Lainnya (11/12)</span>
-                        <span id="dpp-nilai-lainnya" class="font-medium">Rp 0</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">PPN (12%)</span>
-                        <span id="ppn" class="font-medium">Rp 0</span>
-                    </div>
-                    <div class="flex justify-between border-t border-gray-200 pt-2">
-                        <span class="text-gray-800 font-semibold">Netto</span>
-                        <span id="netto" class="text-indigo-600 font-bold">Rp 0</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-8 bg-white rounded-lg p-6 custom-shadow max-w-2xl mx-auto">
-            <h2 class="text-lg font-medium text-gray-900 mb-4">Calculation Details</h2>
-            <div class="bg-gray-50 p-4 rounded-md">
-                <ul class="list-disc pl-5 space-y-2 text-sm text-gray-600">
-                    <li><span class="font-medium">Grand Total</span> = Total Harga Jual - Total Diskon</li>
-                    <li><span class="font-medium">DPP Nilai Lainnya</span> = Grand Total × 11/12</li>
-                    <li><span class="font-medium">PPN</span> = DPP Nilai Lainnya × 12%</li>
-                    <li><span class="font-medium">Netto</span> = Grand Total + PPN</li>
-                </ul>
-            </div>
-        </div>
+    <div class="input-section">
+        <label for="product">Product Name:</label>
+        <input type="text" id="product" placeholder="Enter product name">
+        <label for="price">Price (Rp):</label>
+        <input type="number" id="price" placeholder="Enter price">
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" placeholder="Enter quantity">
+        <button onclick="addItem()">Add Item</button>
     </div>
 
-    <script>
-        function formatRupiah(amount) {
-            const rounded = (amount - Math.floor(amount)) >= 0.5 ? Math.ceil(amount) : Math.floor(amount);
-            return 'Rp ' + rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    <div class="service-fees">
+        <label for="shippingFee">Shipping Fee (Rp):</label>
+        <input type="number" id="shippingFee" value="12000" placeholder="Enter shipping fee">
+        <label for="serviceFee">Service Fee (Rp):</label>
+        <input type="number" id="serviceFee" value="3000" placeholder="Enter service fee">
+        <label for="discount">Discount (Rp):</label>
+        <input type="number" id="discount" value="12000" placeholder="Enter discount">
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Product Name</th>
+                <th>Price (Rp)</th>
+                <th>Quantity</th>
+                <th>Subtotal (Rp)</th>
+            </tr>
+        </thead>
+        <tbody id="orderTable">
+            <!-- Dynamic rows will appear here -->
+        </tbody>
+    </table>
+
+    <div class="total-container">
+        <h3>Total Calculation:</h3>
+        <p>Subtotal from items: <span id="itemTotal">Rp 0</span></p>
+        <p>Shipping Fee: <span id="shippingFeeTotal">Rp 0</span></p>
+        <p>Service Fee: <span id="serviceFeeTotal">Rp 0</span></p>
+        <p>Discount: <span id="discountTotal">Rp 0</span></p>
+        <h3 class="total-amount">Total: <span id="totalAmount">Rp 0</span></h3>
+    </div>
+</div>
+
+<script>
+    let itemCount = 0;
+    let totalAmount = 0;
+    let itemTotal = 0;
+    let serviceFee = parseInt(document.getElementById("serviceFee").value);
+    let shippingFee = parseInt(document.getElementById("shippingFee").value);
+    let discount = parseInt(document.getElementById("discount").value);
+
+    function formatNumber(number) {
+        return number.toLocaleString('id-ID');
+    }
+
+    function calculateTotal() {
+        const totalBeforeFees = itemTotal;
+        const subtotal = totalBeforeFees + serviceFee + shippingFee - discount;
+
+        document.getElementById("itemTotal").innerText = `Rp ${formatNumber(totalBeforeFees)}`;
+        document.getElementById("shippingFeeTotal").innerText = `Rp ${formatNumber(shippingFee)}`;
+        document.getElementById("serviceFeeTotal").innerText = `Rp ${formatNumber(serviceFee)}`;
+        document.getElementById("discountTotal").innerText = `Rp ${formatNumber(discount)}`;
+        document.getElementById("totalAmount").innerText = `Rp ${formatNumber(subtotal)}`;
+    }
+
+    function addItem() {
+        const product = document.getElementById("product").value;
+        const price = parseFloat(document.getElementById("price").value);
+        const quantity = parseInt(document.getElementById("quantity").value);
+
+        if (!product || isNaN(price) || isNaN(quantity) || quantity <= 0 || price <= 0) {
+            alert("Please fill in all fields with valid data.");
+            return;
         }
 
-        function calculateTax() {
-            const totalPrice = parseFloat(document.getElementById('total-price').value) || 0;
-            const totalDiscount = parseFloat(document.getElementById('total-discount').value) || 0;
-            
-            const grandTotal = totalPrice - totalDiscount;
-            const dppNilaiLainnya = grandTotal * (11 / 12);
-            const ppn = dppNilaiLainnya * 0.12;
-            const netto = grandTotal + ppn;
-            
-            document.getElementById('grand-total').textContent = formatRupiah(grandTotal);
-            document.getElementById('dpp-nilai-lainnya').textContent = formatRupiah(dppNilaiLainnya);
-            document.getElementById('ppn').textContent = formatRupiah(ppn);
-            document.getElementById('netto').textContent = formatRupiah(netto);
-        }
+        itemCount++;
+        const subtotal = price * quantity;
+        itemTotal += subtotal;
 
-        window.onload = calculateTax;
-    </script>
+        const table = document.getElementById("orderTable");
+        const row = table.insertRow();
+        row.innerHTML = `
+            <td>${itemCount}</td>
+            <td>${product}</td>
+            <td>Rp ${formatNumber(price)}</td>
+            <td>${quantity}</td>
+            <td>Rp ${formatNumber(subtotal)}</td>
+        `;
+
+        calculateTotal();
+
+        document.getElementById("product").value = "";
+        document.getElementById("price").value = "";
+        document.getElementById("quantity").value = "";
+    }
+
+    document.getElementById("serviceFee").addEventListener("input", function() {
+        serviceFee = parseInt(this.value);
+        calculateTotal();
+    });
+
+    document.getElementById("shippingFee").addEventListener("input", function() {
+        shippingFee = parseInt(this.value);
+        calculateTotal();
+    });
+
+    document.getElementById("discount").addEventListener("input", function() {
+        discount = parseInt(this.value);
+        calculateTotal();
+    });
+</script>
+
 </body>
 </html>
